@@ -8,6 +8,7 @@ import ProjectBoardPage from '../pages/ProjectBoardPage'
 import LeaderboardPage from '../pages/LeaderboardPage'
 import ProfilePage from '../pages/ProfilePage'
 import NotFoundPage from '../pages/NotFoundPage'
+import RegisterPage from '../pages/RegisterPage'
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,8 @@ const AppRoutes = () => {
 
                     {/* 404 */}
                     <Route path="*" element={<NotFoundPage />} />
+
+                    <Route path="/register" element={<RegisterPage />} />
 
                 </Routes>
             </Layout>
