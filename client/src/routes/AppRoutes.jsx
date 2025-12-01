@@ -9,6 +9,7 @@ import LeaderboardPage from '../pages/LeaderboardPage'
 import ProfilePage from '../pages/ProfilePage'
 import NotFoundPage from '../pages/NotFoundPage'
 import RegisterPage from '../pages/RegisterPage'
+import ProtectedRoute from './ProtectedRoute'
 
 const AppRoutes = () => {
     return (
@@ -21,10 +22,10 @@ const AppRoutes = () => {
                     <Route path='/login' element={<Login />} />
 
                     {/* main app pages */}
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/project/:id" element={<ProjectBoardPage />} />
-                    <Route path="/leaderboard" element={<LeaderboardPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute>} />
+                    <Route path="/project/:id" element={<ProtectedRoute> <ProjectBoardPage /> </ProtectedRoute>} />
+                    <Route path="/leaderboard" element={<ProtectedRoute> <LeaderboardPage /> </ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute> <ProfilePage /> </ProtectedRoute>} />
 
                     {/* 404 */}
                     <Route path="*" element={<NotFoundPage />} />
