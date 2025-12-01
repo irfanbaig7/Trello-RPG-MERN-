@@ -2,14 +2,25 @@ import { useForm } from "react-hook-form"
 import Input from '../components/ui/Input';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "../utils/authSchemas";
+import { authApi } from "../api/authApi";
+import { useAuthStore } from "../store/useAuthStore";
+
 
 
 const Login = () => {
 
   const { register, handleSubmit, formState: { errors }, } = useForm({ resolver: zodResolver(loginSchema) })
 
-  const onSubmit = (data) => {
-    console.log("Login Form Data:", data);
+  const setAuth = useAuthStore((state) => state.setAuth)
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await authApi.login(data);
+      setAuth(res.data.user, res.data.token)
+      console.log("Logged in:", res.data);
+    } catch (error) {
+      console.log("Login failed", error.message);
+    }
   };
 
   return (
