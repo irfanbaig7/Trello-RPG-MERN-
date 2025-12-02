@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import connectDB from "./config/connectDB.js"
 import testRoutes from "./routes/test.routes.js"
+import authRoutes from "./routes/auth.route.js"
 
 const app = express();
 
@@ -12,8 +13,9 @@ app.use(express.json());
 // Connect DB
 connectDB();
 
-// Test route
+// routes
 app.use("/api/test", testRoutes)
+app.use("/api/auth", authRoutes)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on Port : ${PORT}`));
