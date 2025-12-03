@@ -3,6 +3,7 @@ import cors from "cors"
 import connectDB from "./config/connectDB.js"
 import testRoutes from "./routes/test.routes.js"
 import authRoutes from "./routes/auth.route.js"
+import protectedRoutes from "./routes/protected.routes.js"
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 connectDB();
 
 // routes
+app.use("/api/protected", protectedRoutes);
 app.use("/api/test", testRoutes)
 app.use("/api/auth", authRoutes)
 
