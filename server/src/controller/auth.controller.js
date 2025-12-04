@@ -22,6 +22,9 @@ export const registerUser = async (req, res) => {
             passHash,
         })
 
+        // token create
+        const genToken = generateToken(user._id);
+
         // gen final res
         res.json({
             message: "user registered successfully",
@@ -29,7 +32,8 @@ export const registerUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-            }
+            },
+            token: genToken,
         })
 
     } catch (err) {

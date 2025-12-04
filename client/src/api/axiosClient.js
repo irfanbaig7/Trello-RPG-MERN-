@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const axiosClient = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "http://localhost:3500/api",
     headers: {
         "Content-Type": "application/json",
     }
@@ -18,10 +18,10 @@ axiosClient.interceptors.request.use((config) => {
 
 })
 
-axiosClient.interceptors.response.use( 
+axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
         console.log(" Api Error  : ", error.response?.data || error.message);
-        return Promise.reject(error);  
+        return Promise.reject(error);
     }
 )

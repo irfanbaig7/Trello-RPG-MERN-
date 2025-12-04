@@ -5,6 +5,9 @@ export const useAuthStore = create((set) => ({
     user: null,
     token: localStorage.getItem("token") || null,
     isLoggedIn: !!localStorage.getItem("token"),
+    loading: false,
+    error: null,
+
 
 
     // Set user after login/register
@@ -18,6 +21,8 @@ export const useAuthStore = create((set) => ({
             user,
             token,
             isLoggedIn: true,
+            loading: false,
+            error: null,
         };
 
     }),
@@ -34,5 +39,9 @@ export const useAuthStore = create((set) => ({
                 isLoggedIn: false,
             };
         }),
+
+    setLoading: (value) => set({ loading: value }),
+
+    setError: (msg) => set({ error: msg, loading: false }),
 
 }))

@@ -4,19 +4,30 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "../utils/authSchemas";
 import { authApi } from "../api/authApi";
 import { useAuthStore } from "../store/useAuthStore";
+import { useNavigate } from "react-router-dom"
 
 
 
 const Login = () => {
 
-  const { register, handleSubmit, formState: { errors }, } = useForm({ resolver: zodResolver(loginSchema) })
+  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(loginSchema) })
 
   const setAuth = useAuthStore((state) => state.setAuth)
+  const navigate = useNavigate();
+  const setLoading = useAuthStore((state) => state.setLoading);
+  const setError = useAuthStore((state) => state.setError);
+  const loading = useAuthStore((state) => state.loading);
+  const error = useAuthStore((state) => state.error);
 
   const onSubmit = async (data) => {
+
+    setLoading(true);
+    setError(null);
+
     try {
       const res = await authApi.login(data);
       setAuth(res.data.user, res.data.token)
+      navigate("/dashboard")
       console.log("Logged in:", res.data);
     } catch (error) {
       console.log("Login failed", error.message);
@@ -34,14 +45,22 @@ const Login = () => {
           <p className="text-red-500 text-sm">{errors.email.message}</p>
         )}
 
+
         <Input label="Password" type="password" name="password" register={register} />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password.message}</p>
         )}
 
-        <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-          Login
+
+        <button
+          disabled={loading}
+          className={`w-full p-2 rounded text-white ${loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
+
+        {error && <p className="text-red-500">{error}</p>}
 
         <p className="text-sm">
           Don’t have an account?

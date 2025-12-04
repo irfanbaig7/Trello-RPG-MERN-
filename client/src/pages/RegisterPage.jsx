@@ -2,12 +2,33 @@ import { useForm } from "react-hook-form";
 import Input from "../components/ui/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../utils/authSchemas";
+import { useAuthStore } from "../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
+import { authApi } from "../api/authApi";
 
 function RegisterPage() {
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(registerSchema) });
 
-  const onSubmit = (data) => {
-    console.log("Register Form Data:", data);
+  const navigate = useNavigate();
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const setLoading = useAuthStore((state) => state.setLoading);
+  const setError = useAuthStore((state) => state.setError);
+  const loading = useAuthStore((state) => state.loading);
+  const error = useAuthStore((state) => state.error);
+
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await authApi.register(data);
+      setAuth(res.data.user, res.data.token);
+      navigate("/dashboard");
+      console.log("register successful ", res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
@@ -26,14 +47,22 @@ function RegisterPage() {
           <p className="text-red-500 text-sm">{errors.email.message}</p>
         )}
 
+
         <Input label="Password" type="password" name="password" register={register} />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password.message}</p>
         )}
 
-        <button className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">
-          Register
+        <button
+          disabled={loading}
+          className={`w-full p-2 rounded text-white ${loading ? "bg-green-400" : "bg-green-600 hover:bg-green-700"
+            }`}
+        >
+          {loading ? "Creating account..." : "Register"}
         </button>
+
+        {error && <p className="text-red-500">{error}</p>}
+
       </form>
     </div>
   );
