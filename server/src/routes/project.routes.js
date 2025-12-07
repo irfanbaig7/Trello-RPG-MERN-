@@ -1,6 +1,6 @@
 import express from "express"
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { createProject, getProject } from "../controller/project.controller.js";
+import { createProject, getProject, getProjectById } from "../controller/project.controller.js";
 
 
 const router = express.Router();
@@ -13,5 +13,8 @@ router.get("/", getProject)
 
 // POST /api/projects -> create project
 router.post("/", createProject)
+
+// GET single project
+router.get("/:id", getProjectById);
 
 export default router

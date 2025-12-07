@@ -43,3 +43,18 @@ export const getProject = async (req, res) => {
     }
 }
 
+
+export const getProjectById = async (req, res) => {
+    try {
+        const project = await Project.findOne({ _id: req.params.id, userId: req.userId, })
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        res.status(200).json({ message: "Project founded", project });
+    } catch (error) {
+        console.log("Error inside getProject by id", error);
+        res.status(500).json({
+            message: "projectbytid/server error"
+        })
+    }
+}

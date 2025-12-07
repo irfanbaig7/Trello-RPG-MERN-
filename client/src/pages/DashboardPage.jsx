@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Input from "../components/ui/Input.jsx";
 import { useProjects } from "../hooks/useProjects.js";
+import { Link } from "react-router-dom";
 
 function DashboardPage() {
 
@@ -66,8 +67,10 @@ function DashboardPage() {
         <div className="space-y-3">
           {projectQuery.data.map((p) => (
             <div key={p._id} className="p-3 border rounded bg-gray-50">
-              <h3 className="text-lg font-semibold">{p.name}</h3>
-              <p className="text-gray-600">{p.description}</p>
+              <Link to={`/project/${p._id}`}>
+                <h3 className="text-lg font-semibold">{p.name}</h3>
+                <p className="text-gray-600">{p.description}</p>
+              </Link>
             </div>
           ))}
 
