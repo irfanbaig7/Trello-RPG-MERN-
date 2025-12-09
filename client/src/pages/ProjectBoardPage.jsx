@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
 import { useProject } from "../hooks/useProjectById";
 import TaskCard from "../components/tasks/TaskCard";
@@ -8,18 +8,20 @@ function ProjectBoardPage() {
   const { id: projectId } = useParams();
 
   const { data: project, isLoading: projectLoading } = useProject(projectId);
-  const { tasksQuery, createTask } = useTasks(projectId);
+  const { tasksQuery, createTask, updateStatus } = useTasks(projectId);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
-  if (projectLoading) return <p>Loading project...</p>;
 
   // Group tasks by status
   const tasks = tasksQuery.data || [];
   const todoTasks = tasks.filter((t) => t.status === "todo");
   const inProgressTasks = tasks.filter((t) => t.status === "in_progress");
   const doneTasks = tasks.filter((t) => t.status === "done");
+
+  useEffect(() => {
+    console.log(tasksQuery.data);
+  }, [tasksQuery.data]);
 
   const handleCreateTask = (e) => {
     e.preventDefault();
@@ -35,6 +37,14 @@ function ProjectBoardPage() {
       }
     );
   };
+
+  const handleMoveTask = (taskId, status) => {
+    updateStatus.mutate(
+      { taskId, status }
+    )
+  }
+
+  if (projectLoading) return <p>Loading project...</p>;
 
   return (
     <div className="space-y-6">
@@ -68,8 +78,8 @@ function ProjectBoardPage() {
         <button
           disabled={createTask.isPending}
           className={`px-4 py-2 rounded text-white ${createTask.isPending
-              ? "bg-blue-400"
-              : "bg-blue-600 hover:bg-blue-700"
+            ? "bg-blue-400"
+            : "bg-blue-600 hover:bg-blue-700"
             }`}
         >
           {createTask.isPending ? "Creating..." : "Add Task"}
@@ -77,7 +87,7 @@ function ProjectBoardPage() {
       </form>
 
       {/* Kanban Columns */}
-      {tasksQuery.isLoading ? (
+      {tasksQuery.isFetching ? (
         <p>Loading tasks...</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -86,7 +96,7 @@ function ProjectBoardPage() {
             <h3 className="font-semibold mb-2">Todo</h3>
             <div className="space-y-2">
               {todoTasks.map((task) => (
-                <TaskCard key={task._id} task={task} />
+                <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
             </div>
           </div>
@@ -96,7 +106,7 @@ function ProjectBoardPage() {
             <h3 className="font-semibold mb-2">In Progress</h3>
             <div className="space-y-2">
               {inProgressTasks.map((task) => (
-                <TaskCard key={task._id} task={task} />
+                <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
             </div>
           </div>
@@ -106,10 +116,11 @@ function ProjectBoardPage() {
             <h3 className="font-semibold mb-2">Done</h3>
             <div className="space-y-2">
               {doneTasks.map((task) => (
-                <TaskCard key={task._id} task={task} />
+                <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
             </div>
           </div>
+
         </div>
       )}
     </div>
