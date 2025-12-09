@@ -8,5 +8,5 @@ export const taksApi = {
         axiosClient.post(`/tasks/project/${projectId}`, data),
 
     updateStatus: (taskId, status) =>
-        axiosClient.patch(`/tasks/${taskId}/status`, { status }),
+        axiosClient.patch(`/tasks/${taskId}/status`, { status }), 
 };
