@@ -5,6 +5,7 @@ import testRoutes from "./routes/test.routes.js"
 import authRoutes from "./routes/auth.route.js"
 import protectedRoutes from "./routes/protected.routes.js"
 import projectRoutes from "./routes/project.routes.js"
+import taskRoutes from "./routes/task.routes.js"
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use("/api/protected", protectedRoutes);
 app.use("/api/test", testRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/projects", projectRoutes)
+app.use("/api/tasks", taskRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on Port : ${PORT}`));
