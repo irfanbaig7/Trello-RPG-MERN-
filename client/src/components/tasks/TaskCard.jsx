@@ -1,7 +1,25 @@
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+
 function TaskCard({ task, onMove }) {
+
+
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: task._id,
+        data: {
+            status: task.status
+        }
+    })
+
+    const style = {
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.5 : 1
+    }
+
+
     return (
-        <div className="p-3 border rounded bg-white shadow-sm space-y-2">
-            <div>
+        <div ref={setNodeRef} style={style} className="p-3 border rounded bg-white shadow-sm space-y-2">
+            <div className="cursor-grab font-semibold" {...listeners} {...attributes}>
                 <h4 className="font-semibold">{task.title}</h4>
 
                 {task.description && (

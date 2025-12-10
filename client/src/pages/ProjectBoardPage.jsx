@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useTasks } from "../hooks/useTasks";
 import { useProject } from "../hooks/useProjectById";
 import TaskCard from "../components/tasks/TaskCard";
+import { DndContext } from "@dnd-kit/core";
+import TaskColumn from "../components/tasks/TaskColumn";
 
 function ProjectBoardPage() {
   const { id: projectId } = useParams();
@@ -43,6 +45,23 @@ function ProjectBoardPage() {
       { taskId, status }
     )
   }
+
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const taskId = active.id;
+    const newStatus = over.id;
+
+    // same col me drag hua -> Ignore
+    const oldStatus = active.data.current.status;
+    if (oldStatus === newStatus) return;
+
+    updateStatus.mutate({ taskId, status: newStatus })
+  }
+
 
   if (projectLoading) return <p>Loading project...</p>;
 
@@ -90,38 +109,29 @@ function ProjectBoardPage() {
       {tasksQuery.isFetching ? (
         <p>Loading tasks...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* TODO */}
-          <div>
-            <h3 className="font-semibold mb-2">Todo</h3>
-            <div className="space-y-2">
+        <DndContext onDragEnd={handleDragEnd}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* TODO */}
+            <TaskColumn id="todo" title="Todo">
               {todoTasks.map((task) => (
                 <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
-            </div>
-          </div>
+            </TaskColumn>
 
-          {/* IN PROGRESS */}
-          <div>
-            <h3 className="font-semibold mb-2">In Progress</h3>
-            <div className="space-y-2">
+            <TaskColumn id="in_progress" title="In Progress">
               {inProgressTasks.map((task) => (
                 <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
-            </div>
-          </div>
+            </TaskColumn>
 
-          {/* DONE */}
-          <div>
-            <h3 className="font-semibold mb-2">Done</h3>
-            <div className="space-y-2">
+            <TaskColumn id="done" title="Done">
               {doneTasks.map((task) => (
                 <TaskCard key={task._id} task={task} onMove={handleMoveTask} />
               ))}
-            </div>
-          </div>
+            </TaskColumn>
 
-        </div>
+          </div>
+        </DndContext>
       )}
     </div>
   );
