@@ -1,5 +1,6 @@
 import ProjectModel from "../models/ProjectModel.js";
 import Task from "../models/TaskModel.js";
+import { applyTaskCompletionReward } from "../utils/userStatsUtils.js";
 
 // Create Task
 export const createTask = async (req, res) => {
@@ -68,7 +69,25 @@ export const updateTaskStatus = async (req, res) => {
             return res.status(404).json({ message: "Task not found" });
         }
 
-        res.json({ task });
+        const wasDone = task.status === "done";
+
+        task.status = status;
+        await task.save();
+
+        let updatedStats = null;
+
+        // Reward ONLY when moving to DONE
+        if (status === "done" && !wasDone) {
+            updatedStats = await applyTaskCompletionReward(
+                req.userId,
+                task.points
+            );
+        }
+
+        res.json({
+            task,
+            statsUpdated: updatedStats, // frontend later use karega
+        });
     } catch (err) {
         console.error("Update Task Error:", err);
         res.status(500).json({ message: "Server error" });
