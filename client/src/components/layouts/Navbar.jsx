@@ -1,7 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
+import XPBar from "../game/XPBar";
+import { useGameStore } from "../../store/useGameStore";
 
 function Navbar() {
+  const { points, level } = useGameStore();
+
   const navigate = useNavigate();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -44,6 +48,14 @@ function Navbar() {
             <Link to="/leaderboard" className="hover:underline">
               Leaderboard
             </Link>
+
+            <div className="hidden md:block w-48">
+              <XPBar />
+            </div>
+
+            <span className="px-2 py-1 bg-yellow-300 rounded text-xs">
+              ⭐ {points}
+            </span>
 
             <button
               onClick={handleLogout}

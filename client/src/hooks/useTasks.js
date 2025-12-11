@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { taksApi } from "../api/taskApi";
+import { useGameStore } from "../store/useGameStore";
 
 export function useTasks(projectId) {
 
@@ -36,11 +37,17 @@ export function useTasks(projectId) {
     const updateStatus = useMutation({
         mutationFn: ({ taskId, status }) =>
             taksApi.updateStatus(taskId, status),
-        onSuccess: () => {
+        onSuccess: (res) => {
+            // tasksQuery.refetch();
             queryClient.invalidateQueries({
                 queryKey: ["tasks", projectId],
             });
-            // tasksQuery.refetch();
+
+            // If backend returned updated stats
+            if (res.data?.statsUpdated) {
+                useGameStore.getState().setStats(res.data.statsUpdated);
+            }
+
         }
 
     })

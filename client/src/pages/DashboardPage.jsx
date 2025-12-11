@@ -1,9 +1,12 @@
+import { useUserStats } from "../hooks/useUserStats.js";
 import { useState } from "react";
 import Input from "../components/ui/Input.jsx";
 import { useProjects } from "../hooks/useProjects.js";
 import { Link } from "react-router-dom";
 
 function DashboardPage() {
+
+  useUserStats();
 
   const { projectQuery, createProject } = useProjects();
 
